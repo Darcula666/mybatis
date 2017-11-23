@@ -19,14 +19,76 @@ public class MybatisTest {
         return new SqlSessionFactoryBuilder().build(inputStream);
     }
 
+    /**
+     * 查询
+     *
+     * @throws IOException
+     */
     @Test
     public void MybatisTest() throws IOException {
         SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
         SqlSession openSession = sqlSessionFactory.openSession();
         EmployeeMapper mapper = openSession.getMapper(EmployeeMapper.class);
         try {
-            Employee employee=  mapper.getEmpById(1);
-        }finally {
+            Employee employee = mapper.getEmpById(1);
+        } finally {
+            openSession.close();
+        }
+
+    }
+
+    /**
+     * 添加
+     *
+     * @throws IOException
+     */
+    @Test
+    public void MybatisTest2() throws IOException {
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        SqlSession openSession = sqlSessionFactory.openSession();
+        EmployeeMapper mapper = openSession.getMapper(EmployeeMapper.class);
+        try {
+            mapper.addEmp(new Employee(null, "dajiji", "dajiji@google.com", "1"));
+            openSession.commit();
+        } finally {
+            openSession.close();
+        }
+
+    }
+
+    /**
+     * 修改
+     *
+     * @throws IOException
+     */
+    @Test
+    public void MybatisTest3() throws IOException {
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        SqlSession openSession = sqlSessionFactory.openSession();
+        EmployeeMapper mapper = openSession.getMapper(EmployeeMapper.class);
+        try {
+            mapper.updateEmp(new Employee(1, "xiaojiji", "xiaojiji@google.com", "1"));
+            openSession.commit();
+        } finally {
+            openSession.close();
+        }
+
+    }
+
+    /**
+     * 删除
+     *
+     * @throws IOException
+     */
+    @Test
+    public void MybatisTest4() throws IOException {
+        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
+        SqlSession openSession = sqlSessionFactory.openSession();
+        EmployeeMapper mapper = openSession.getMapper(EmployeeMapper.class);
+        try {
+            mapper.deleteEmpById(1);
+            openSession.commit();
+        } finally {
             openSession.close();
         }
 

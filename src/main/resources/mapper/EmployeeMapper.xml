@@ -3,7 +3,22 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gfdz.mybatis.dao.EmployeeMapper">
-    <select id="getEmployee" resultType="com.gfdz.mybatis.entity.Employee">
-        SELECT * FROM tb1_employee WHERE id=#{id}
+    <select id="getEmpById" resultType="com.gfdz.mybatis.entity.Employee" databaseId="mysql">
+        SELECT *
+        FROM tb1_employee
+        WHERE id = #{id}
     </select>
+    <insert id="addEmp" parameterType="com.gfdz.mybatis.entity.Employee">
+        INSERT INTO tb1_employee (lastname, email, gender)
+        VALUES (#{lastName}, #{email}, #{gender})
+    </insert>
+    <update id="updateEmp">
+        UPDATE tb1_employee
+        SET lastname = #{lastName}, email = #{email}, gender = #{gender}
+        WHERE id = #{id}
+    </update>
+    <delete id="deleteEmpById">
+        DELETE FROM tb1_employee
+        WHERE id = #{id}
+    </delete>
 </mapper>
