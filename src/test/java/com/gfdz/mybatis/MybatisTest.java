@@ -1,16 +1,22 @@
 package com.gfdz.mybatis;
 
-import com.gfdz.mybatis.dao.EmployeeMapper;
-import com.gfdz.mybatis.entity.Employee;
-
 import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.junit.Test;
+import org.mybatis.generator.api.MyBatisGenerator;
+import org.mybatis.generator.config.Configuration;
+import org.mybatis.generator.config.xml.ConfigurationParser;
+import org.mybatis.generator.exception.InvalidConfigurationException;
+import org.mybatis.generator.exception.XMLParserException;
+import org.mybatis.generator.internal.DefaultShellCallback;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MybatisTest {
     public SqlSessionFactory getSqlSessionFactory() throws IOException {
@@ -18,79 +24,15 @@ public class MybatisTest {
         InputStream inputStream = Resources.getResourceAsStream(resource);
         return new SqlSessionFactoryBuilder().build(inputStream);
     }
-
-    /**
-     * 查询
-     *
-     * @throws IOException
-     */
     @Test
-    public void MybatisTest() throws IOException {
-        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
-        SqlSession openSession = sqlSessionFactory.openSession();
-        EmployeeMapper mapper = openSession.getMapper(EmployeeMapper.class);
-        try {
-            Employee employee = mapper.getEmpById(1);
-        } finally {
-            openSession.close();
-        }
-
-    }
-
-    /**
-     * 添加
-     *
-     * @throws IOException
-     */
-    @Test
-    public void MybatisTest2() throws IOException {
-        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
-        SqlSession openSession = sqlSessionFactory.openSession();
-        EmployeeMapper mapper = openSession.getMapper(EmployeeMapper.class);
-        try {
-            mapper.addEmp(new Employee(null, "dajiji", "dajiji@google.com", "1"));
-            openSession.commit();
-        } finally {
-            openSession.close();
-        }
-
-    }
-
-    /**
-     * 修改
-     *
-     * @throws IOException
-     */
-    @Test
-    public void MybatisTest3() throws IOException {
-        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
-        SqlSession openSession = sqlSessionFactory.openSession();
-        EmployeeMapper mapper = openSession.getMapper(EmployeeMapper.class);
-        try {
-            mapper.updateEmp(new Employee(1, "xiaojiji", "xiaojiji@google.com", "1"));
-            openSession.commit();
-        } finally {
-            openSession.close();
-        }
-
-    }
-
-    /**
-     * 删除
-     *
-     * @throws IOException
-     */
-    @Test
-    public void MybatisTest4() throws IOException {
-        SqlSessionFactory sqlSessionFactory = getSqlSessionFactory();
-        SqlSession openSession = sqlSessionFactory.openSession();
-        EmployeeMapper mapper = openSession.getMapper(EmployeeMapper.class);
-        try {
-            mapper.deleteEmpById(1);
-            openSession.commit();
-        } finally {
-            openSession.close();
-        }
-
+    public void testMBG() throws IOException, XMLParserException, InvalidConfigurationException, SQLException, InterruptedException {
+        List<String> warnings = new ArrayList<String>();
+        boolean overwrite = true;
+        File configFile = new File("src/main/resources/MBG.xml");
+        ConfigurationParser cp = new ConfigurationParser(warnings);
+        Configuration config = cp.parseConfiguration(configFile);
+        DefaultShellCallback callback = new DefaultShellCallback(overwrite);
+        MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, callback, warnings);
+        myBatisGenerator.generate(null);
     }
 }
