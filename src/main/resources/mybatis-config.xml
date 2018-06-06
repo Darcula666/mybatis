@@ -3,20 +3,36 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+    <!--1\mybatis可以使用properties配置文件的内容
+      resource:引入类路径下的资源
+      url：引入网络路径或者磁盘路径下的资源
+    -->
+    <properties resource="dbconfig.properties"></properties>
     <settings>
         <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="useActualParamName" value="true"/>
+        <setting name="jdbcTypeForNull" value="NULL"/>
     </settings>
     <typeAliases>
         <package name="com.gfdz.mybatis"/>
     </typeAliases>
-    <environments default="development">
-        <environment id="development">
+    <environments default="mysql">
+        <environment id="mysql">
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
-                <property name="driver" value="com.mysql.jdbc.Driver"/>
-                <property name="url" value="jdbc:mysql://localhost:3306/mybatis"/>
-                <property name="username" value="root"/>
-                <property name="password" value="root"/>
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+        <environment id="oracle">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${orcl.driver}"/>
+                <property name="url" value="${orcl.url}"/>
+                <property name="username" value="${orcl.username}"/>
+                <property name="password" value="${orcl.password}"/>
             </dataSource>
         </environment>
     </environments>
@@ -27,5 +43,6 @@
     </databaseIdProvider>
     <mappers>
         <mapper resource="mapper/EmployeeMapper.xml"/>
+       <!-- <package name="com.gfdz.mybatis.dao"></package>-->
     </mappers>
 </configuration>

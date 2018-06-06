@@ -1,13 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gfdz.mybatis.dao.EmployeeMapper">
-   <!-- <resultMap id="BaseResultMap" type="com.gfdz.mybatis.entity.Employee">
+    <resultMap id="BaseResultMap" type="com.gfdz.mybatis.entity.Employee">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="last_Name" jdbcType="VARCHAR" property="lastName"/>
         <result column="email" jdbcType="VARCHAR" property="email"/>
-        <result column="gender" jdbcType="CHAR" property="gender"/>
-    </resultMap>-->
-    <select id="getById" resultType="com.gfdz.mybatis.entity.Employee">
+        <result column="gender" jdbcType="VARCHAR" property="gender"/>
+    </resultMap>
+    <resultMap id="MyDifEmp" type="com.gfdz.mybatis.entity.Employee">
+        <id column="id" property="id"></id>
+        <result column="last_name" property="lastName"></result>
+        <result column="gender" property="gender"></result>
+        <result column="gender" property="gender"></result>
+        <result column="did" property="department.id"></result>
+        <result column="dept_name" property="department.deptName"></result>
+    </resultMap>
+
+    <resultMap id="MyDifEmp2" type="com.gfdz.mybatis.entity.Employee">
+        <id column="id" property="id"></id>
+        <result column="last_name" property="lastName"></result>
+        <result column="gender" property="gender"></result>
+        <result column="gender" property="gender"></result>
+        <association property="department" javaType="com.gfdz.mybatis.entity.Department">
+            <id column="did" property="id"></id>
+            <result column="dept_name" property="deptName"></result>
+        </association>
+    </resultMap>
+    <select id="getById" resultType="com.gfdz.mybatis.entity.Employee" databaseId="mysql">
        select id ,last_name as lastName,gender,email from tbl_employee where id=#{id}
     </select>
+    <select id="getEmpByIdAndLastName" resultType="com.gfdz.mybatis.entity.Employee" databaseId="mysql">
+       select id ,last_name as lastName,gender,email from tbl_employee where id=#{id} and last_name=#{lastName}
+    </select>
+
+    <select id="getEmpByMap" resultType="com.gfdz.mybatis.entity.Employee" databaseId="mysql">
+       select id ,last_name as lastName,gender,email from tbl_employee where id=#{id} and last_name=#{lastName}
+    </select>
+
+    <select id="getById" resultType="com.gfdz.mybatis.entity.Employee" databaseId="oracle">
+       select empno as id ,ename as lastName from EMP where empno=#{id}
+    </select>
+
+    <select id="getEmpsByLastNameLike" resultType="com.gfdz.mybatis.entity.Employee">
+        select id ,last_name as lastName,gender,email from tbl_employee where last_name like #{lastName}
+    </select>
+
+    <select id="getEmpByLastNameLikeReturnMap" resultType="java.util.Map" databaseId="mysql">
+       select id ,last_name as lastName,gender,email from tbl_employee where last_name like #{lastName}
+    </select>
+
+    <select id="getEmpByIdReturnMap" resultType="map" databaseId="mysql">
+       select id ,last_name as lastName,gender,email from tbl_employee where id=#{id}
+    </select>
+
+    <!--查询employee的同时查询员工对应的部门-->
+    <select id="getEmpAndDeptById" resultMap="MyDifEmp2">
+        SELECT e.`id` id ,e.`last_name`last_name,e.`gender` gender,e.`dept_id` d_id,d.`id` did,d.`dept_name` dept_name
+        FROM tbl_employee e,tbl_dept d
+        WHERE e.`dept_id`=d.`id` AND e.id=#{id}
+    </select>
+    <!--parameterType可以省略-->
+    <insert id="addEmp" parameterType="com.gfdz.mybatis.entity.Employee" useGeneratedKeys="true" keyProperty="id"
+            databaseId="mysql">
+        insert into tbl_employee(last_name,email,gender) values (#{lastName},#{email},#{gender})
+    </insert>
+
+    <insert id="addEmp" parameterType="com.gfdz.mybatis.entity.Employee" databaseId="oracle">
+        <selectKey keyProperty="id" order="BEFORE" resultType="integer">
+            select emp_seq.nextval from dual
+        </selectKey>
+        insert into emp(empno,ename,job) values (#{id},#{lastName},#{email})
+    </insert>
+
+    <update id="updateEmp">
+        update tbl_employee
+        set last_name=#{lastName},email=#{email},gender=#{gender}
+        where id=#{id}
+    </update>
+
+    <delete id="deleteEmpById">
+        delete from tbl_employee where id=#{id}
+    </delete>
 </mapper>
